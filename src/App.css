@@ -1,42 +1,335 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* 1. 背景（ブラウザ全体）の設定 */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #111; /* 外側の暗い背景 */
+  display: flex;            /* 中身をど真ん中に置く設定 */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;         /* スクロールバーを出さない */
+}
+
+/* 2. ゲーム画面（固定サイズ枠）の設定 */
+/* 元の .app-container を修正 */
+.app-container {
+  /* これはウィンドウサイズの決定をするやつ */
+  width: 900px;
+  max-width: 95vw; /* 最大サイズの指定. 不必要かも */
+
+  height: 600px;
+  max-height: 90vh; /* 不必要かも */
+  
+  box-sizing: border-box; /* これは枠線をサイズに含めるやつ */
+
+  /* 枠内のデザイン */
+  background-color: #222;
+  border: 4px solid #444;
+  box-shadow: 0 0 100px rgba(0, 255, 0, 0.8); /* 枠の外側の影 */
+  border-radius: 10px;
+  
+  /* 中身のレイアウト */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* 子要素の位置調整? */
+  color: #ffffff;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* タイトル画面のデザイン */
+.title-screen {
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.game-title {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  color: #0ed8fc; /* これはタイトル文字色 */
+
+  /* これタイトルの光感出す文字の影. rgbaで透明度も込み */
+  text-shadow: 0 0 10px rgba(0, 216, 255, 0.5); 
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.sub-title {
+  color: #aaa;
+  margin-bottom: 3rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.start-button {
+  font-size: 1.5rem;
+  padding: 10px 40px;
+  background-color: #ff0026; /* これはタイトルのstartボタンの色 */
+  color: rgb(255, 255, 255); /* これはstartボタンの文字色 */
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.card {
-  padding: 2em;
+.start-button:hover {
+  /* スタートボタンにカーソル合わせたらムニッてなるやつ */
+  
+  transform: scale(1.1);
 }
 
-.read-the-docs {
+/* ステージ選択画面のデザイン */
+.select-screen {
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.tutorial-area {
+  margin-bottom: 5px;
+}
+
+/* 未開放ステージの選択ボタンデザイン（これが基本になってる） */
+.stage-btn {
+  padding: 15px;
+  font-size: 1.2rem;
+  border: 2px solid #444; /* ボタンの枠線の色 */
+  background-color: #333; /* ボタンの色 */
+  color: #777; /* 文字色 */
+  border-radius: 8px;
+  cursor: not-allowed; /* カーソルを「禁止」マークにする */
+  transition: all 0.2s; /* アニメーション */
+  position: relative;
+}
+
+/* プレイ可能未クリアステージの選択ボタン */
+.stage-btn.is-open {
+  background-color: #008cff;
+  color: white;
+  cursor: pointer;
+}
+
+/* クリア済みのステージの選択ボタン */
+.stage-btn.is-cleared {
+  background-color: #ffe345;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 未クリア最終ステージの選択ボタン */
+.stage-btn.is-open.final-stage {
+  background-color: #e60000;
+  border-color: #ff3333;
+  color: white;
+  box-shadow: 0 0 15px rgba(230, 0, 0, 0.6); /* 赤く光るラスボス～な処理 */
+  font-weight: bold;
+}
+
+/* カーソル合わせたときの挙動 */
+.stage-btn:hover {
+  border-color: #fff; /* 枠線の色 */
+}
+
+/* 未開放ステージ */
+.stage-btn.is-locked:hover {
+  background-color: #222; /* ボタンの色 */
+  animation: shake 0.3s; /* 横に震える */
+}
+
+/* 解法済みステージ共通 */
+.stage-btn.is-open:hover, .stage-btn.is-cleared:hover {
+  background-color: #00c853; /* もタンの色 */
+  color: white;
+  transform: scale(1.05);    /* サイズ変更で少し大きくなる */
+}
+
+/* 最終ステージのほば処理 */
+.stage-btn.is-open.final-stage:hover {
+  background-color: #ff1a1a;
+  transform: scale(1.1) rotate(4deg); /* 大きくなりつつ少し傾く特殊演出 */
+}
+
+/* チュートリアルボタン */
+.tutorial-btn {
+  width: 80%;
+  background-color: #008cff;
+}
+
+/* Stage1-4を並べるグリッド */
+.stage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2列 */
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+/* 戻るボタン */
+.back-btn {
+  background: transparent;
+  border: 1px solid #666;
   color: #888;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
+/* ステージ選択画面のチュートリアルボタンの下の文字. 理解が浅いところがあるので少し詳細に記す */
+.tutorial-hint {
+  color: #ffeb3b;      /* 色 */
+  font-size: 0.9rem;   /* 文字サイズ */
+  margin-top: 5px;    /* 上（チュートリアルボタン）との隙間. 上記にあるチュートリアルボタンの下の空間を作るやつと重複 */
+  margin-bottom: 20px; /* 下（ステージ一覧）との隙間 */
+  font-weight: bold;
+  
+  /* アニメーションの設定 */
+  /* 時間(2秒) 無限繰り返し(infinite) */
+  animation: blink 2s infinite ease-in-out;
+}
+
+/* 点滅アニメーションの定義 */
+@keyframes blink {
+  0% { opacity: 1; }   /* はっきり見える */
+  50% { opacity: 0.3; } /* 薄くなる */
+  100% { opacity: 1; }  /* 元に戻る */
+}
+
+/* メッセージボックスの処理 */
+.message-overlay {
+  /* 画面全体を覆う透明な膜（誤操作防止） */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* 下の方に表示 */
+  z-index: 100; /* 一番手前に表示 */
+}
+
+.message-box {
+  width: 80%;
+  margin-bottom: 50px;
+  padding: 20px;
+  background-color: #fff;
+  border: 4px solid #008cff; /* 青枠 */
+  border-radius: 10px;
+  color: #333;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  box-shadow: 0 0 20px rgba(0, 140, 255, 0.5);
+  animation: popUp 0.3s ease-out;
+}
+
+.message-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  min-height: 3em; /* 文字が少なくても高さを確保 */
+}
+
+.next-msg-btn {
+  background-color: #008cff;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  float: right; /* 右寄せ */
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.next-msg-btn:hover {
+  background-color: #0060b0;
+}
+
+/* ポップアップのアニメーション */
+@keyframes popUp {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 迷路のマスデザイン */
+.maze-cell {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-family: sans-serif;
+  color: #333;
+  box-sizing: border-box; /* 枠線をサイズに含める設定 */
+}
+
+/* 各マスの色定義 */
+.cell-path {
+  background-color: #ffffff;
+}
+.cell-wall {
+  background-color: #444444; /* 1:壁 */
+  border-color: #333;
+}
+.cell-start {
+  background-color: #adff9e; /* 2:スタート */
+}
+.cell-goal {
+  background-color: #ff4081; /* 3:ゴール */
+}
+.cell-checkpoint {
+  background-color: #ffab40; /* 4:チェックポイント */
+}
+.cell-kisei {
+  background-color: #00e5ff; /* 5~:規制マス */
+  font-size: 1.2rem; /* サイズ調整 */
+}
+
+/* パズルフェーズのカーソルの縁取り */
+.cursor-overlay {
+  position: absolute;
+  border: 4px solid #d000ff; /* 紫色 */
+  box-shadow: 0 0 10px #d000ff; /* 光らせる */
+  pointer-events: none; /* マウス操作を邪魔しない */
+  z-index: 10;
+  transition: all 0.1s; /* スムーズに動く */
+  box-sizing: border-box;
+}
+
+/* 通った後のタイル (-1) */
+.cell-visited {
+  background-color: #333; /* 暗いグレー */
+  border-color: #222;
+}
+
+/* プレイヤーキャラクター（濃い紫の光る円） */
+.player-char {
+  position: absolute;
+  width: 40px; 
+  height: 40px;
+  background-color: #aa00ff; 
+  border-radius: 50%; /* 丸くする処理です */
+  box-shadow: 0 0 15px #d000ff; 
+  transition: all 0.1s; /* スムーズでシームレスな移動（パズルフェーズのカーソルと同じ） */
+  z-index: 20;
+  transform: scale(0.6);
+  pointer-events: none;
+}
+
+/* Challengeボタンのデザイン */
+.challenge-btn {
+  background-color: #d000ff; /* いろ */
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(208, 0, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+/* ボタンにマウスを乗せたときのアニメーション */
+.challenge-btn:hover {
+  background-color: #e040fb;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(208, 0, 255, 0.8);
 }
