@@ -251,7 +251,13 @@ function App() {
       if (collectedCheckpoints >= totalCheckpoints) {
         setTimeout(() => {
           handleStageClear(currentStage);
-          alert("ステージクリア！");
+
+          if (currentStage === 'stage6') {
+             alert("おめでとう。あなたの勝ちです。");
+          } else {
+             alert("ステージクリア！");
+          }
+
           setScreen('select');
         }, 100);
       }
@@ -481,6 +487,9 @@ function App() {
   // ------------------------------------------------------------
   // 画面描画（レンダリング）（JSXですわよ）
   // ------------------------------------------------------------
+
+  const CELL_SIZE = currentStage === 'stage6' ? 30 : 40;
+
   return (
     <div className="app-container">
       
@@ -616,8 +625,8 @@ function App() {
 
           <div className="maze-board" style={{ 
             display: 'grid', 
-            gridTemplateColumns: `repeat(${mazeData[0].length}, 40px)`, /* 横40pxがn個の迷路. nが迷路の横のマス数 */
-            gridTemplateRows: `repeat(${mazeData.length}, 40px)`, /* 縦も40pxがn個の迷路. これは縦のマス */
+            gridTemplateColumns: `repeat(${mazeData[0].length}, ${CELL_SIZE}px)`, /* 横40pxがn個の迷路. nが迷路の横のマス数. CELL_SIZEは６の時だけ30 */
+            gridTemplateRows: `repeat(${mazeData.length}, ${CELL_SIZE}px)`, /* 縦も40px（CELL_SIZE. ６だと30px）n個の迷路. これは縦のマス */
             gap: '0',
             position: 'relative',
             width: 'fit-content',
@@ -662,17 +671,20 @@ function App() {
             {/* パズルフェーズの操作カーソル */}
             {gamePhase === 'puzzle' && (
               <div className="cursor-overlay" style={{
-                left: `${cursorPos.x * 40}px`,
-                top: `${cursorPos.y * 40}px`,
-                width: '120px', height: '120px'
+                left: `${cursorPos.x * CELL_SIZE}px`,
+                top: `${cursorPos.y * CELL_SIZE}px`,
+                width: `${CELL_SIZE * 3}px`, 
+                height: `${CELL_SIZE * 3}px`
               }} />
             )}
 
             {/* 迷路フェーズのプレイヤー */}
             {gamePhase === 'maze' && (
               <div className="player-char" style={{
-                left: `${playerPos.x * 40}px`,
-                top: `${playerPos.y * 40}px`,
+                left: `${playerPos.x * CELL_SIZE}px`,
+                top: `${playerPos.y * CELL_SIZE}px`,
+                width: `${CELL_SIZE}px`,
+                height: `${CELL_SIZE}px`
               }} />
             )}
           </div>
