@@ -22,44 +22,59 @@ const ALL_STAGES_DATA = {
     [2, 1, 1, 1, 1]
   ],
 
-  stage2: INITIAL_TUTORIAL_DATA,
-  stage3: INITIAL_TUTORIAL_DATA,
-  stage4: INITIAL_TUTORIAL_DATA,
-  stage5: INITIAL_TUTORIAL_DATA,
-  stage6: INITIAL_TUTORIAL_DATA,
-
-  /*
   stage2: [
-    []
+    [1, 1, 1, 1, 3],
+    [4, 1, 1, 4, 1],
+    [1, 0, 4, 0, 1],
+    [1, 1, 4, 0, 1],
+    [2, 1, 1, 1, 1]
   ],
-
+  
   stage3: [
-    []
+    [1, 1, 1, 2],
+    [1, 1, 4, 1],
+    [4, 1, 4, 4],
+    [1, 4, 4, 1],
+    [3, 1, 1, 1]
   ],
-
+  
   stage4: [
-    []
+    [5, 1, 1, 5, 4, 1],
+    [1, 1, 1, 1, 4, 1],
+    [1, 4, 4, 1, 4, 1],
+    [2, 4, 4, 1, 4, 3]
   ],
-
+  
   stage5: [
-    []
+    [3, 4, 5, 1, 0, 0, 0],
+    [1, 1, 0, 1, 0, 1, 1],
+    [4, 0, 0, 4, 4, 0, 2],
+    [5, 1, 0, 1, 6, 1, 4],
+    [0, 1, 0, 1, 0, 1, 6]
   ],
-
+  
   stage6: [
-    []
+    [7, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1],
+    [4, 1, 8, 4, 4, 8, 1, 11, 4, 12, 12],
+    [1, 7, 4, 9, 1, 4, 9, 1, 4, 1, 4],
+    [4, 4, 6, 4, 1, 1, 1, 1, 11, 1, 1],
+    [1, 1, 1, 5, 1, 10, 4, 4, 1, 4, 1],
+    [1, 4, 0, 1, 1, 4, 1, 10, 1, 13, 1],
+    [2, 13, 5, 1, 1, 4, 1, 1, 1, 4, 4],
+    [1, 4, 4, 4, 1, 1, 1, 1, 1, 1, 0],
+    [1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 3]
   ],
-  */
 }
 
 // 各ステージの操作回数（仮設定）
 const STAGE_MOVES_LIMIT = { 
   tutorial: 99,
-  stage1: 5,
-  stage2: 10,
-  stage3: 10,
-  stage4: 10,
-  stage5: 10,
-  stage6: 10 };
+  stage1: 2,
+  stage2: 2,
+  stage3: 3,
+  stage4: 3,
+  stage5: 4,
+  stage6: 13 };
 
 function App() {
   // ------------------------------------------------------------
@@ -115,10 +130,35 @@ function App() {
     if (screen === 'game' && currentStage === 'tutorial') {
       // チュートリアルの場合のみメッセージをセット
       setTutorialMessages([
-        "テスト１",
-        "テスト２"
+        // \nで改行だったが, 「`」にしたら普通の改行でも行けるようになったので消した 2026/01/06
+        // 改行後になぞの空白が出ていたので「"」に戻した. 2026/01/06
+        "パズルゲーム「エイリアンシフト」へようこそ！このゲームは、\n" +
+        "宇宙人の間で流行っている高度なパズルゲームだよ！", 
+        // なんか黄色くなってるけど, 動くので放置（多分\nの影響）（壊れたら対処）2026/01/06
+        "ルールは簡単！マス目上の迷路に挑戦するんだけど、迷路は壊れていて\n" +
+        "クリアできないんだ。限られた回数だけ、3x3の9マスを操作できるから、その能力で\n" +
+        "クリア可能な迷路を復元するんだ！",
+
+        "操作は常にキーボードの[W][A][S][D]のキーを使うよ！紫のカーソルに囲われた9マスに\n" +
+        "操作ができるよ！できる操作は2種類で、[H][L]キーで回転！9つのマスが\n" +
+        "90度回転するイメージだよ！[J][K]で反転！上下反転と左右反転だよ！",
+
+        "さて、次はマスの説明だね！緑のマスがスタート地点、赤がゴールだよ！\n" +
+        "灰色のマスは通れない壁で、白いマスが道だよ！一度通ると引き返せないよ！\n" +
+        "スタートから始まってオレンジ色のマスをすべて通ってゴールにつくとクリアだよ！",
+
+        "迷路の残りの操作回数がなくなるか、「challenge」っていうボタンをクリックすると\n" +
+        "迷路に挑戦できるよ！そこでも同じく[W][A][S][D]で移動だよ。\n" +
+        "まぁ、くわしいことはやってみればわかるよ！それじゃあ、いってらっしゃい！"
       ]);
       setCurrentMessageIndex(0); // 最初（0番目）から表示
+
+    } else if (screen === 'game' && currentStage === 'stage4'){
+      setTutorialMessages([
+        "新しい要素が出てきたので説明します。\n" +
+        "水色のマスは、同じ文字が書いてある水色のマスにのみ移動できます。"
+      ])
+      setCurrentMessageIndex(0);
     } else {
       // それ以外ならメッセージは空にする
       setTutorialMessages([]);
@@ -314,9 +354,9 @@ function App() {
       // もし「迷路フェーズ」なら、プレイヤーの移動処理だけをする. という条件分岐だ
       else if (gamePhase === 'maze') {
         if (key === 'w') handlePlayerMove(0, -1); // 上へ
-        if (key === 's') handlePlayerMove(0, 1);  // 下へ
+        if (key === 's') handlePlayerMove(0, 1); // 下へ
         if (key === 'a') handlePlayerMove(-1, 0); // 左へ
-        if (key === 'd') handlePlayerMove(1, 0);  // 右へ
+        if (key === 'd') handlePlayerMove(1, 0); // 右へ
       }
     };
 
@@ -589,17 +629,17 @@ function App() {
                 // 即時関数を使って、マスの数字に応じたクラスと文字を決定する
                 (() => {
                   let className = 'maze-cell'; // 基本のクラス
-                  let displayText = '';        // 表示する文字（基本は空っぽ）
+                  let displayText = ''; // 表示する文字（基本は空っぽ）
 
                   // マスの数字(cell)によって分岐
                   if (cell === 0) {
-                    className += ' cell-path';       // 道
+                    className += ' cell-path'; // 道
                   } else if (cell === 1) {
-                    className += ' cell-wall';       // 壁
+                    className += ' cell-wall'; // 壁
                   } else if (cell === 2) {
-                    className += ' cell-start';      // スタート
+                    className += ' cell-start'; // スタート
                   } else if (cell === 3) {
-                    className += ' cell-goal';       // ゴール
+                    className += ' cell-goal'; // ゴール
                   } else if (cell === 4) {
                     className += ' cell-checkpoint'; // チェックポイント
                   } else if (cell >= 5) {
@@ -656,13 +696,14 @@ function App() {
                   </button>
                   
                   <button className="challenge-btn" onClick={startMazePhase}>
-                    Challenge!
+                    Challenge
                   </button>
                 </div>
               </> /* 複数の要素の表示とかをまとめるやつです. 
                      表示されない囲いでまとめることでデザイン崩れを防止するってやつですが, 
                      たぶんあなたは忘れるので今見てるサイトのURL貼っとくね */
                   // https://qiita.com/kaba/items/b681ffe3412a9af32f92
+                  // そんな難しいことではないからサイト見たらすぐ思い出す
             ) : (
               /* 迷路フェーズの表示 */
               <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'10px' }}>

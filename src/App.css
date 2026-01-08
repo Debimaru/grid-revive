@@ -222,6 +222,7 @@ body, html {
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 15px;
+  white-space: pre-wrap; /* \nで改行する */
   min-height: 3em; /* 文字が少なくても高さを確保 */
 }
 
