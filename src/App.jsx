@@ -46,12 +46,14 @@ const ALL_STAGES_DATA = {
   ],
   
   stage5: [
-    [3, 4, 5, 1, 0, 0, 0],
+    [3, 4, 6, 1, 0, 0, 0],
     [1, 1, 0, 1, 0, 1, 1],
     [4, 0, 0, 4, 4, 0, 2],
-    [5, 1, 0, 1, 6, 1, 4],
-    [0, 1, 0, 1, 0, 1, 6]
+    [6, 1, 0, 1, 5, 1, 4],
+    [0, 1, 0, 1, 0, 1, 5]
   ],
+
+  // AとBの位置を入れ替えました_2026/01/27
   
   stage6: [
     [7, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -109,6 +111,9 @@ function App() {
   const [collectedCheckpoints, setCollectedCheckpoints] = useState(0); // 回収したチェックポイント数
   const [totalCheckpoints, setTotalCheckpoints] = useState(0); // そのステージのチェックポイント総数
 
+  // ヒントの処理
+  const [isHintOpen, setIsHintOpen] = useState(false); // ヒントボタンの処理. アップデートにより追加_2026/01/27
+
   // ------------------------------------------------------------
   // ロード処理（useEffect）（同じくJavaScript）
   // ------------------------------------------------------------
@@ -147,9 +152,11 @@ function App() {
         "灰色のマスは通れない壁で、白いマスが道だよ！一度通ると引き返せないよ！\n" +
         "スタートから始まってオレンジ色のマスをすべて通ってゴールにつくとクリアだよ！",
 
+        // 文章の変更が行われた_2026/01/27
         "迷路の残りの操作回数がなくなるか、「challenge」っていうボタンをクリックすると\n" +
         "迷路に挑戦できるよ！そこでも同じく[W][A][S][D]で移動だよ。\n" +
-        "まぁ、くわしいことはやってみればわかるよ！それじゃあ、いってらっしゃい！"
+        "まぁ、くわしいことはやってみればわかるよ！操作方法を忘れたら、\n" +
+        "右上のボタンのクリックでいつでも確認できるからね。それじゃあ、いってらっしゃい！"
       ]);
       setCurrentMessageIndex(0); // 最初（0番目）から表示
 
@@ -602,6 +609,11 @@ function App() {
       {/* パターン3: ゲームプレイ画面 */}
       {screen === 'game' && (
         <div className="game-screen">
+          {/* 新規追加したヒントボタン_2026/01/27_23:02 */}
+          <button className="hint-toggle-btn" onClick={() => setIsHintOpen(true)}>
+            操作方法
+          </button>
+          
           <h2>プレイ中: {currentStage}</h2>
 
           {/* メッセージボックスの表示 */}
@@ -622,6 +634,28 @@ function App() {
               );
             }
           })()}
+
+          {isHintOpen && (
+            <div className="message-overlay" style={{ alignItems: 'center' }}>
+              <div className="message-box" style={{ width: '60%', border: '4px solid #d000ff' }}>
+                
+                <p className="message-text">
+                  【操作方法】<br/>
+                  [W][A][S][D]：カーソル/プレイヤー移動<br/>
+                  [H]：カーソル内左回転<br/>
+                  [L]：カーソル内右回転<br/>
+                  [J]：カーソル内上下反転<br/>
+                  [k]：カーソル内左右反転<br/>
+                  <br/>
+                  クリアを目指して頑張ってください！
+                </p>
+
+                <button className="next-msg-btn" onClick={() => setIsHintOpen(false)}>
+                  OK
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="maze-board" style={{ 
             display: 'grid', 

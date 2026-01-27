@@ -334,3 +334,25 @@ body, html {
   transform: scale(1.1);
   box-shadow: 0 0 20px rgba(208, 0, 255, 0.8);
 }
+
+/* ヒントボタンのデザイン */
+.hint-toggle-btn {
+  position: absolute; /* 画面の定位置に固定 */
+  top: 20px;
+  right: 20px;
+  background-color: #333;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 200;
+  transition: all 0.2s;
+}
+
+.hint-toggle-btn:hover {
+  background-color: #fff;
+  color: #333;
+  transform: scale(1.1);
+}
